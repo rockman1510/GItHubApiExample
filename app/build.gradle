@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -18,9 +20,15 @@ android {
     }
 
     buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', 'BASE_URL', "\"https://api.github.com\""
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', 'BASE_URL', "\"https://api.github.com\""
         }
     }
     compileOptions {
@@ -30,6 +38,14 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+}
+
+ext{
+    retrofit_version = '2.9.0'
+    junit_version = "1.1.3"
+    glide_version = "4.12.0"
+    dagger_version = "2.40.5"
+    roomVersion = "2.4.1"
 }
 
 dependencies {
@@ -42,4 +58,55 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
+
+
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
+
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation("androidx.annotation:annotation:1.3.0")
+    // To use the Java-compatible @Experimental API annotation
+    implementation("androidx.annotation:annotation-experimental:1.2.0")
+
+    implementation "com.google.dagger:dagger:$dagger_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    implementation "com.google.dagger:dagger-android-support:$dagger_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger_version"
+
+    implementation("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+//    //RxJava2 support for Room
+//    implementation("androidx.room:room-rxjava2:$roomVersion")
+    //Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:$roomVersion")
+
+    // Sample usage: AndroidJUnitRunner
+    testImplementation "androidx.test:rules:1.4.0"
+
+    // AndroidX Test - Instrumented testing
+    // Sample usage: "InstrumentationRegistry"
+    androidTestImplementation "androidx.test:core-ktx:1.4.0"
+    // Sample usage: "AndroidJUnit4"
+    androidTestImplementation "androidx.test.ext:junit-ktx:$junit_version"
+    // Sample usage: AndroidJUnitRunner
+    androidTestImplementation "androidx.test:rules:1.4.0"
+
+    testImplementation "io.mockk:mockk:1.10.5"
+
+    testImplementation "org.robolectric:robolectric:4.2.1"
+
+    // Using Dagger in androidTest and Robolectric too
+    kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
+    kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
+
+    // optional - Test helpers
+    testImplementation("androidx.room:room-testing:$roomVersion")
+
 }
