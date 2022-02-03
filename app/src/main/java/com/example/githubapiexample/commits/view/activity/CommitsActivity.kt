@@ -39,6 +39,8 @@ class CommitsActivity : BaseActivity(), CommitsContract.View,
 //        commitViewModel = ViewModelProvider(
 //            this, ViewModelProvider.AndroidViewModelFactory.getInstance(application)
 //        )[CommitViewModel::class.java]
+
+
         presenter = CommitsPresenter(this, CommitsRouter(this))
         presenter?.bindView(this, this, commitViewModel)
         presenter?.onViewCreated()
