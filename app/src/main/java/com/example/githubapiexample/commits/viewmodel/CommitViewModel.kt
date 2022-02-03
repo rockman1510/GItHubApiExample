@@ -1,68 +1,59 @@
 package com.example.githubapiexample.commits.viewmodel
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.githubapiexample.api.response.CommitResponse
 import com.example.githubapiexample.commits.model.CommitModel
 import com.example.githubapiexample.commits.utils.CommitUtils
-import com.example.githubapiexample.repository.ApiRepository
-import com.example.githubapiexample.repository.DataBaseRepository
+import com.example.githubapiexample.repository.CommitsRepository
 import com.example.githubapiexample.roomdatabase.entity.CommitsEntity
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableObserver
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class CommitViewModel @Inject constructor(
-    private val apiRepository: ApiRepository,
-    private val dataBaseRepository: DataBaseRepository
-) : ViewModel() {
+class CommitViewModel @Inject constructor(private val commitsRepository: CommitsRepository) :
+    ViewModel() {
 
     private val TAG = CommitViewModel::class.java.simpleName
 
-    private lateinit var commitList: MutableLiveData<ArrayList<CommitModel>>
+    private val commitList: MutableLiveData<ArrayList<CommitModel>> = MutableLiveData()
+    private val commitEntity: MutableLiveData<CommitsEntity> = MutableLiveData()
 
     @SuppressLint("CheckResult")
     fun getCommits(
         limit: Int = 25, page: Int = 1, errorCallback: (Throwable) -> Unit
     ): LiveData<ArrayList<CommitModel>> {
-        commitList = MutableLiveData()
-        apiRepository.getCommitsApi(limit, page).observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribeWith(object : DisposableObserver<ArrayList<CommitResponse>>() {
-                override fun onNext(response: ArrayList<CommitResponse>) {
-                    Log.d(TAG, "getCommits: onNext")
-                    commitList.value = CommitUtils.convertToCommitModelList(response)
-                }
-
-                override fun onError(e: Throwable) {
-                    Log.d(TAG, "getCommits: onError")
-                    errorCallback(e)
-                }
-
-                override fun onComplete() {
-
-                }
-
-            })
+        viewModelScope.launch {
+            try {
+                commitList.value = CommitUtils.convertToCommitModelList(
+                    Gson().fromJson(
+                        commitsRepository.getCommitsApi(limit, page).body().toString(),
+                        object : TypeToken<ArrayList<CommitResponse>>() {}.type
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+                errorCallback(e)
+            }
+        }
         return commitList
     }
 
     fun getLocalCommits(): LiveData<CommitsEntity> {
-        return dataBaseRepository.getLocalCommits()
+        viewModelScope.launch {
+            commitEntity.value = commitsRepository.getLocalCommits().value
+        }
+        return commitEntity
     }
 
-    suspend fun renewLocalCommits(commitList: ArrayList<CommitModel>):Boolean{
-        return GlobalScope.async(Dispatchers.IO) {
-            dataBaseRepository.renewLocalCommits(commitList)
-            return@async true
-        }.await()
+    fun renewLocalCommits(commitList: ArrayList<CommitModel>) {
+        viewModelScope.launch {
+            commitsRepository.renewLocalCommits(commitList)
+        }
     }
 
 

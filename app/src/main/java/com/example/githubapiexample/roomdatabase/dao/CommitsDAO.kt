@@ -10,16 +10,16 @@ import com.example.githubapiexample.roomdatabase.entity.CommitsEntity
 @Dao
 interface CommitsDAO {
     @Insert
-    fun insertCommits(vararg commitsEntity: CommitsEntity)
+    suspend fun insertCommits(vararg commitsEntity: CommitsEntity)
 
     @Query("SELECT * FROM CommitsEntity")
     fun getCommits(): LiveData<CommitsEntity>
 
     @Query("DELETE FROM CommitsEntity")
-    fun deleteAll() : Int
+    suspend fun deleteAll(): Int
 
     @Transaction
-    suspend fun reNewData(commitsEntity: CommitsEntity){
+    suspend fun reNewData(commitsEntity: CommitsEntity) {
         deleteAll()
         insertCommits(commitsEntity)
     }
