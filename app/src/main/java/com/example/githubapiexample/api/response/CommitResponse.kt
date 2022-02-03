@@ -9,23 +9,23 @@ import com.google.gson.annotations.SerializedName
 data class CommitResponse(
     @Expose
     @SerializedName("sha")
-    var sha: String,
+    val sha: String,
     @Expose
     @SerializedName("node_id")
-    var node_id: String,
+    val node_id: String,
 
     @Expose
     @SerializedName("commit")
-    var commit: CommitObject,
+    val commit: CommitObject,
 
     @Expose
     @SerializedName("url")
-    var url: String,
+    val url: String,
 
     @Expose
     @SerializedName("author")
-    var author: AuthorObject,
+    val author: AuthorObject,
     @Expose
     @SerializedName("committer")
-    var committer: CommitterObject,
+    val committer: CommitterObject,
 )

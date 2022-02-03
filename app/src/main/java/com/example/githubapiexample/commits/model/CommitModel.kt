@@ -4,23 +4,24 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class CommitModel(
-    var sha: String = "", var nodeId: String = "",
-    var message: String = "",
-    var url: String = "",
-    var author: String = "",
-    var authorEmail: String = "",
-    var authorAvatar: String = "",
-    var commitDate: String = ""
+    val sha: String,
+    val nodeId: String,
+    val message: String,
+    val url: String,
+    val author: String,
+    val authorEmail: String,
+    val authorAvatar: String,
+    val commitDate: String
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readString()!!
+        parcel.readString().toString(),
+        parcel.readString().toString(),
+        parcel.readString().toString(),
+        parcel.readString().toString(),
+        parcel.readString().toString(),
+        parcel.readString().toString(),
+        parcel.readString().toString(),
+        parcel.readString().toString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

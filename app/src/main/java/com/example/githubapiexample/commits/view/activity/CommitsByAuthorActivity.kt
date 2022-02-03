@@ -3,6 +3,7 @@ package com.example.githubapiexample.commits.view.activity
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.githubapiexample.BaseActivity
@@ -40,6 +41,9 @@ class CommitsByAuthorActivity : BaseActivity(), CommitsByAuthorContract.View,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_author_commits)
         initView()
+//        commitByAuthorViewModel = ViewModelProvider(
+//            this, ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+//        )[CommitByAuthorViewModel::class.java]
         presenter = CommitsByAuthorPresenter(this, CommitsByAuthorRouter(this))
         presenter?.bindView(this, this, commitByAuthorViewModel)
         presenter?.onViewCreated(authorEmail)

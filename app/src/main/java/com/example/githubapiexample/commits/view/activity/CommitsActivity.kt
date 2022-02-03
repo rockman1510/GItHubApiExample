@@ -2,6 +2,8 @@ package com.example.githubapiexample.commits.view.activity
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.githubapiexample.BaseActivity
@@ -34,6 +36,9 @@ class CommitsActivity : BaseActivity(), CommitsContract.View,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_commits)
         initView()
+//        commitViewModel = ViewModelProvider(
+//            this, ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+//        )[CommitViewModel::class.java]
         presenter = CommitsPresenter(this, CommitsRouter(this))
         presenter?.bindView(this, this, commitViewModel)
         presenter?.onViewCreated()

@@ -16,7 +16,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.example.githubapiexample.R
 
-class CustomDialog(var context: Context) {
+class CustomDialog(private var context: Context) {
     var builder: Builder? = null
     var alertDialog: AlertDialog? = null
     var llRootView: LinearLayout? = null

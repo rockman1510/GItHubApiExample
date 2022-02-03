@@ -9,7 +9,7 @@ class CommitUtils {
 
         fun convertToCommitModelList(commitResponseList: ArrayList<CommitResponse>): ArrayList<CommitModel> {
             val dataList = ArrayList<CommitModel>()
-            commitResponseList?.forEach {
+            commitResponseList.forEach {
                 dataList.add(fromResponseToModel(it))
             }
             return dataList
@@ -18,7 +18,7 @@ class CommitUtils {
         private fun fromResponseToModel(response: CommitResponse): CommitModel {
             var author = response.commit.author.name
             var avatar = ""
-            response.author?.let {
+            response.author.let {
                 author = response.author.login
                 avatar = response.author.avatar_url
             }

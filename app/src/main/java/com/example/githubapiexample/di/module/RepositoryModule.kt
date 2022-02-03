@@ -1,8 +1,7 @@
 package com.example.githubapiexample.di.module
 
 import com.example.githubapiexample.api.ApiService
-import com.example.githubapiexample.repository.ApiRepository
-import com.example.githubapiexample.repository.DataBaseRepository
+import com.example.githubapiexample.repository.*
 import com.example.githubapiexample.roomdatabase.AppDataBase
 import dagger.Module
 import dagger.Provides
@@ -13,9 +12,14 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideApiRepository(apiService: ApiService): ApiRepository = ApiRepository(apiService)
+    fun provideCommitsRepository(
+        apiService: ApiService, appDataBase: AppDataBase
+    ): CommitsRepository = CommitsRepoImpl(apiService, appDataBase)
 
     @Provides
     @Singleton
-    fun provideDataBaseRepository(appDataBase: AppDataBase): DataBaseRepository = DataBaseRepository(appDataBase)
+    fun provideCommitsByAuthorRepository(
+        apiService: ApiService, appDataBase: AppDataBase
+    ): CommitsByAuthorRepository =
+        CommitsByAuthorRepoImpl(apiService, appDataBase)
 }

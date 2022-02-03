@@ -2,6 +2,7 @@ package com.example.githubapiexample.commits.presenter
 
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.viewModelScope
 import com.example.githubapiexample.Constants
 import com.example.githubapiexample.R
 import com.example.githubapiexample.commits.contract.CommitsByAuthorContract
@@ -43,17 +44,17 @@ class CommitsByAuthorPresenter constructor(
         if (ConnectionUtils.checkNetworkEnabled(context)) {
             commitByAuthorViewModel?.getCommitsByAuthor(
                 authorEmail, Constants.LIMIT_LOADING_ITEM_NUMBER, 1, ::onError
-            )!!.observe(activityLifecycleOwner!!, { loadData(it) })
+            )!!.observe(activityLifecycleOwner!!) { loadData(it) }
         } else {
             isLoadLocal = true
             commitByAuthorViewModel?.getLocalCommitsByAuthor(authorEmail)!!
-                .observe(activityLifecycleOwner!!, {
+                .observe(activityLifecycleOwner!!) {
                     if (it != null) {
                         loadData(it.commitList)
                     } else {
                         loadData(ArrayList())
                     }
-                })
+                }
         }
 
     }
@@ -79,7 +80,7 @@ class CommitsByAuthorPresenter constructor(
             commitByAuthorViewModel?.getCommitsByAuthor(
                 authorEmail, Constants.LIMIT_LOADING_ITEM_NUMBER,
                 (size / Constants.LIMIT_LOADING_ITEM_NUMBER) + 1, ::onError
-            )!!.observe(activityLifecycleOwner!!, { loadData(it) })
+            )!!.observe(activityLifecycleOwner!!) { loadData(it) }
         } else {
             view?.hideLoadingDialog()
             view?.showErrorDialog(context.getString(R.string.no_internet_msg))
@@ -88,9 +89,7 @@ class CommitsByAuthorPresenter constructor(
 
     override fun onSaveData(authorEmail: String, commitList: ArrayList<CommitModel>) {
         if (!isLoadLocal) {
-            GlobalScope.launch(Dispatchers.Main) {
-                commitByAuthorViewModel?.renewLocalCommitsByAuthor(authorEmail, commitList)
-            }
+            commitByAuthorViewModel?.renewLocalCommitsByAuthor(authorEmail, commitList)
         }
     }
 

@@ -2,6 +2,7 @@ package com.example.githubapiexample.commits.presenter
 
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.viewModelScope
 import com.example.githubapiexample.Constants
 import com.example.githubapiexample.R
 import com.example.githubapiexample.commits.contract.CommitsContract
@@ -38,16 +39,16 @@ class CommitsPresenter constructor(
         view?.showLoadingDialog()
         if (ConnectionUtils.checkNetworkEnabled(context)) {
             commitViewModel?.getCommits(Constants.LIMIT_LOADING_ITEM_NUMBER, 1, ::onError)!!
-                .observe(activityLifecycleOwner!!, { loadData(it) })
+                .observe(activityLifecycleOwner!!) { loadData(it) }
         } else {
             isLoadLocal = true
-            commitViewModel?.getLocalCommits()!!.observe(activityLifecycleOwner!!, {
+            commitViewModel?.getLocalCommits()!!.observe(activityLifecycleOwner!!) {
                 if (it != null) {
                     loadData(it.commitList)
                 } else {
                     loadData(ArrayList())
                 }
-            })
+            }
         }
     }
 
@@ -71,7 +72,7 @@ class CommitsPresenter constructor(
             commitViewModel?.getCommits(
                 Constants.LIMIT_LOADING_ITEM_NUMBER,
                 (size / Constants.LIMIT_LOADING_ITEM_NUMBER) + 1, ::onError
-            )!!.observe(activityLifecycleOwner!!, { loadData(it) })
+            )!!.observe(activityLifecycleOwner!!) { loadData(it) }
         } else {
             view?.hideLoadingDialog()
             view?.showErrorDialog(context.getString(R.string.no_internet_msg))
@@ -80,9 +81,7 @@ class CommitsPresenter constructor(
 
     override fun onSaveLocalData(data: ArrayList<CommitModel>) {
         if (!isLoadLocal) {
-            GlobalScope.launch(Dispatchers.Main) {
-                commitViewModel?.renewLocalCommits(data)
-            }
+            commitViewModel?.renewLocalCommits(data)
         }
     }
 

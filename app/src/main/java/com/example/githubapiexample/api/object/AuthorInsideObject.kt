@@ -3,14 +3,14 @@ package com.example.githubapiexample.api.`object`
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class AuthorInsideObject(
+data class AuthorInsideObject(
     @Expose
     @SerializedName("name")
-    var name: String,
+    val name: String,
     @Expose
     @SerializedName("email")
-    var email: String,
+    val email: String,
     @Expose
     @SerializedName("date")
-    var date: String
+    val date: String
 )
